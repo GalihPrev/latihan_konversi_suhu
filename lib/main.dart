@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,15 +18,14 @@ class _MyAppState extends State<MyApp> {
 
   konversi() {
     setState(() {
-     input = double.parse(text1.text);
+      input = double.parse(text1.text);
       kelvin = input + 273;
       reamor = input * 4 / 5;
-
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    var text1;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -35,46 +35,17 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextFormField(
-                controller: text1,
-                decoration: InputDecoration(hintText: "Masukkan Suhu"),
-                
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        "Suhu Dalam Kelvin",
-                        style: TextStyle(fontSize: 30),
-                      ),
-                      Text(
-                        "$kelvin",
-                        style: TextStyle(fontSize: 30),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        "Suhu Dalam Reamor",
-                        style: TextStyle(fontSize: 30),
-                      ),
-                      Text(
-                        "$reamor",
-                        style: TextStyle(fontSize: 30),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              inputSuhu(text1: text1),
+              Hasil(kelvin: kelvin, reamor: reamor),
               Container(
                 height: 50,
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: konversi,
-                  child:  Text(
+                  onPressed: () {
+                    konversi();
+                    text1.clear();
+                  },
+                  child: Text(
                     "Konversi",
                     style: TextStyle(fontSize: 30),
                   ),
@@ -84,6 +55,70 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class inputSuhu extends StatelessWidget {
+  const inputSuhu({
+    Key? key,
+    required this.text1,
+  }) : super(key: key);
+
+  final TextEditingController text1;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+        controller: text1,
+        decoration: InputDecoration(hintText: "Masukkan Suhu"),
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ]);
+  }
+}
+
+class Hasil extends StatelessWidget {
+  const Hasil({
+    Key? key,
+    required this.kelvin,
+    required this.reamor,
+  }) : super(key: key);
+
+  final double kelvin;
+  final double reamor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Column(
+          children: [
+            Text(
+              "Suhu Dalam Kelvin",
+              style: TextStyle(fontSize: 30),
+            ),
+            Text(
+              "$kelvin",
+              style: TextStyle(fontSize: 30),
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            Text(
+              "Suhu Dalam Reamor",
+              style: TextStyle(fontSize: 30),
+            ),
+            Text(
+              "$reamor",
+              style: TextStyle(fontSize: 30),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
